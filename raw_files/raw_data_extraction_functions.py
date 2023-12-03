@@ -1,6 +1,37 @@
+"""
+Purpose:
+This file is used to house a number of objects that are used to take the raw csv file
+used in the original analysis of this project, and ETL pertaining data into facts
+and dimensions that are more usable for this project.
+
+There are 4 objects currently within this object:
+
+1. CSV Reader - taking in a CSV, output a pandas dataframe.
+
+2. DataframeGlueOps - take in 2 dataframes that are similarly structured other than column names. 
+The columns are renamed, and the Dataframes are unioned using the Pandas concat method.
+
+3. CSVWriter - taking in a pandas dataframe, write out to CSV within the selected directory.
+
+4. DateDimDFGenerator - Take in a start and end date for your project. Create the pertaining 
+date dimension as a pandas dataframe. Write this out as a CSV file.
+"""
+
+############ REMAINING ACTIONS:
+# Add further exception handling. 
+# Add further testing
+# Add further commenting
+
+###############
+### Imports ###
+###############
+
 import pandas as pd
+from datetime import timedelta, date, datetime
+
 
 class CSVReader:
+
     def __init__(self, file_path, column_names=None):
         self.file_path = file_path
         self.column_names = column_names
@@ -79,4 +110,35 @@ class CSVWriter:
             print(f"Data written to {file_name} successfully.")
         except Exception as e:
             print(f"Error: {e}")
-            
+
+class DateDimDFGenerator:
+    def __init__(self, start_date, end_date):
+        self.start_date = start_date
+        self.end_date = end_date
+
+    # Function to generate date range
+    def daterange(self):
+        for n in range(int((self.end_date - self.start_date).days) + 1):
+            yield self.start_date + timedelta(n)
+
+    def dim_date_dataframe(self):
+        # Generate date dimension
+        date_dimension = pd.DataFrame(self.daterange(), columns=['Date'])
+        
+        # Extract additional date-related attributes
+        date_dimension['date_id'] = date_dimension['Date'].dt.strftime('%Y%m%d')
+        date_dimension['Date'].dt.year
+        date_dimension['Year'] = date_dimension['Date'].dt.year
+        date_dimension['Month'] = date_dimension['Date'].dt.month
+        date_dimension['Day'] = date_dimension['Date'].dt.day
+        date_dimension['Month_Name'] = date_dimension['Date'].dt.strftime('%B')
+        date_dimension['Weekday'] = date_dimension['Date'].dt.dayofweek
+        date_dimension['dayofyear'] = date_dimension['Date'].dt.dayofyear
+        date_dimension['Quarter'] = date_dimension['Date'].dt.quarter
+        date_dimension['days_in_month'] = date_dimension['Date'].dt.days_in_month
+        date_dimension['is_month_start'] = date_dimension['Date'].dt.is_month_start
+        date_dimension['is_month_end'] = date_dimension['Date'].dt.is_month_end
+        date_dimension['is_year_start'] = date_dimension['Date'].dt.is_year_start
+        date_dimension['is_year_end'] = date_dimension['Date'].dt.is_year_end
+        date_dimension['is_leap_year'] = date_dimension['Date'].dt.is_leap_year
+        return date_dimension

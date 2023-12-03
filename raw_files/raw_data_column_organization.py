@@ -1,3 +1,12 @@
+"""
+Purpose:
+This file is used to de-clutter the individual ETL files as the width of the original table
+and some subsequent objects is difficult to read.
+
+These lists are called during the creation / manipulation of numerous objects. 
+"""
+
+# This list is the original column list used for the Raw Data for this project.
 gamelogs_df_column_names = ["date","game_no","dow","visiting_team","visiting_league","visiting_league_game_no","home_team","home_league","home_league_game_no","visiting_team_score"   ,"home_team_score","length_outs","day_night"
 ,"completion_info","forfeit_info","protest_info","park_info","attendance_info","time_min","visiting_line","home_line","v_AB","v_h","v_dbl","v_trpl","v_hr","v_rbi","v_sh","v_sf","v_hbp","v_bb","v_bb_int","v_so"
 ,"v_sb","v_cs","v_gidp","v_ci","v_lob","v_ptchrs","v_er","v_er_team","v_wp","v_balk","v_po","v_asst","v_err","v_pb","v_dbl_def","v_trpl_def","h_AB","h_h","h_dbl","h_trpl"
@@ -10,18 +19,20 @@ gamelogs_df_column_names = ["date","game_no","dow","visiting_team","visiting_lea
 ,"h_6_id","h_6_name","h_6_pos","h_7_id","h_7_name","h_7_pos","h_8_id","h_8_name","h_8_pos","h_9_id","h_9_name","h_9_pos","additional_info","acquisition_info"
 ]
 
+# This is the column list used when beginning to build out the fact_gamelogs object.
 fact_gamelogs_cols = ["date","game_no","dow","visiting_team","visiting_league","visiting_league_game_no"
  ,"home_team","home_league","home_league_game_no","visiting_team_score","home_team_score"]
 
+# This is the column list used for building out the dim_team_statistics dimension, for the home team.
 dim_team_stats_home_col = ["home_team","home_league","h_AB","h_h","h_dbl","h_trpl","h_hr","h_rbi","h_sh"
 ,"h_sf","h_hbp","h_bb","h_bb_int","h_so","h_sb","h_cs","h_gidp","h_ci","h_lob","h_ptchrs"
 ,"h_er","h_er_team","h_wp","h_balk","h_po","h_asst","h_err","h_pb","h_dbl_def","h_trpl_def"]
-
+# This is the column list used for building out the dim_team_statistics dimension, for the visiting team.
 dim_team_stats_visitors_col = ["visiting_team","visiting_league","v_AB","v_h","v_dbl","v_trpl","v_hr","v_rbi","v_sh"
 ,"v_sf","v_hbp","v_bb","v_bb_int","v_so","v_sb","v_cs","v_gidp","v_ci","v_lob","v_ptchrs"
 ,"v_er","v_er_team","v_wp","v_balk","v_po","v_asst","v_err","v_pb","v_dbl_def","v_trpl_def"]
 
-
+# This is the column list used for building out the dim_team_statistics dimension, this is used for the rename & union process.
 merged_columns = ["team","league","AB","h","dbl","trpl","hr","rbi","sh","sf","hbp","bb","bb_int"
 ,"so","sb","cs","gidp","ci","lob","ptchrs","er","er_team","wp","balk","po","asst","err","pb","dbl_def","trpl_def"]
 
