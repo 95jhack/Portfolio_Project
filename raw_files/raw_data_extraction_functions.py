@@ -77,25 +77,25 @@ class DataframeGlueOps:
         self.df2 = df2
         self.new_column_names = None
 
-    def merge_and_rename(self, df1, df2, new_column_names):
+    def rename_and_concat(self, df1, df2, new_column_names):
         """
-        Update the naming of both individual dataframes. Merge the two DataFrames.
+        Update the naming of both individual dataframes. Union the two DataFrames.
 
         Parameters:
         - df1, df2: pandas DataFrames
-        - new_column_names: list of str, shared column names for the merged DataFrame
+        - new_column_names: list of str, shared column names for the Unioned DataFrame
 
         Returns:
-        - merged_df: pandas DataFrame, the merged DataFrame with new column names
+        - Unioned_df: pandas DataFrame, the Unioned DataFrame with new column names
         """
         # Drop original column names
         self.df1.columns=new_column_names
         self.df2.columns=new_column_names
 
         # Append DataFrames
-        merged_df = pd.concat([self.df1, self.df2])
+        Unioned_df = pd.concat([self.df1, self.df2])
 
-        return merged_df
+        return Unioned_df
 
 class CSVWriter:
     def __init__(self, dataframe):
@@ -142,3 +142,16 @@ class DateDimDFGenerator:
         date_dimension['is_year_end'] = date_dimension['Date'].dt.is_year_end
         date_dimension['is_leap_year'] = date_dimension['Date'].dt.is_leap_year
         return date_dimension
+
+
+def create_id_from_text_column(df_input, text_column, id_column='id'):
+    # Sort unique values from the text column alphabetically
+    unique_values = sorted(df_input[text_column].unique())
+
+    # Create a mapping of text values to alphabetical IDs
+    id_mapping = {value: i+1 for i, value in enumerate(unique_values)}
+
+    # Apply the mapping to create the ID column
+    df_input[id_column] = df_input[text_column].map(id_mapping)
+
+    return df_input

@@ -11,7 +11,7 @@ This file is used for
 
 import pandas as pd
 from raw_data_extraction_functions import CSVReader, CSVWriter
-from raw_data_column_organization import gamelogs_df_column_names, merged_columns, fact_gamelogs_cols
+from raw_data_column_organization import gamelogs_df_column_names, merged_columns, fact_gamelogs_cols, create_id_from_text_column
 
 # Read the raw gamelogs data to a pandas dataframe
 csv_reader = CSVReader(

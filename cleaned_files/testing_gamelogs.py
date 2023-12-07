@@ -10,9 +10,9 @@ select_query1 = '''
                     COUNT(date) AS game_count
                 FROM fact_gamelogs
                 WHERE TRUE
-                    AND visiting_team = 'TOR'
+                    AND opponent_team = 'TOR'
                 GROUP BY 
-                    visiting_team
+                    opponent_team
             '''
 result_away = csv_to_sqlite.fetch_all_rows(select_query1)
 result_away = result_away[0]
@@ -27,9 +27,9 @@ select_query2 = '''
                     COUNT(date) AS game_count
                 FROM fact_gamelogs
                 WHERE TRUE
-                    AND home_team = 'TOR'
+                    AND team = 'TOR'
                 GROUP BY 
-                    home_team
+                    team
             '''
 result_home = csv_to_sqlite.fetch_all_rows(select_query2)
 result_home = result_home[0] 
@@ -37,5 +37,27 @@ result_home = result_home[0]
 # this lines UNPACKS values
 (rows_home,) = result_home  
 # print(rows_home)
+
+# Execute a query to retrieve data
+select_query_duplicate_check = '''
+                SELECT 
+                    COALESCE(sq.game_count,0)
+                FROM(
+                    SELECT 
+                        date
+                        , opponent_team
+                        , team
+                        , team_game_no
+                        , COUNT(*) AS game_count
+                    FROM fact_gamelogs
+                    GROUP BY 
+                        date
+                        , opponent_team
+                        , team
+                        , team_game_no
+                ) AS sq
+                WHERE game_count > 1
+            '''
+dup_check_result = len(csv_to_sqlite.fetch_all_rows(select_query_duplicate_check))
 
 csv_to_sqlite.close_connection()

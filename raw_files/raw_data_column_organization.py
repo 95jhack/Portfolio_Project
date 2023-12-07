@@ -33,6 +33,6 @@ dim_team_stats_visitors_col = ["visiting_team","visiting_league","v_AB","v_h","v
 ,"v_er","v_er_team","v_wp","v_balk","v_po","v_asst","v_err","v_pb","v_dbl_def","v_trpl_def"]
 
 # This is the column list used for building out the dim_team_statistics dimension, this is used for the rename & union process.
-merged_columns = ["team","league","AB","h","dbl","trpl","hr","rbi","sh","sf","hbp","bb","bb_int"
+unioned_columns = ["team","league","AB","h","dbl","trpl","hr","rbi","sh","sf","hbp","bb","bb_int"
 ,"so","sb","cs","gidp","ci","lob","ptchrs","er","er_team","wp","balk","po","asst","err","pb","dbl_def","trpl_def"]
 

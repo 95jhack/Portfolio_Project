@@ -10,8 +10,8 @@ This file is used for
 ###############
 
 import pandas as pd
-from raw_data_extraction_functions import CSVReader, DataframeGlueOps, CSVWriter
-from raw_data_column_organization import gamelogs_df_column_names, merged_columns, dim_team_stats_home_col, dim_team_stats_visitors_col, fact_gamelogs_cols
+from raw_data_extraction_functions import CSVReader, DataframeGlueOps, CSVWriter, create_id_from_text_column
+from raw_data_column_organization import gamelogs_df_column_names, unioned_columns, dim_team_stats_home_col, dim_team_stats_visitors_col, fact_gamelogs_cols
 
 # Read the raw gamelogs data to a pandas dataframe
 csv_reader = CSVReader(
@@ -35,7 +35,7 @@ dim_team_statistics_home = df[dim_team_stats_home_col].groupby(by=["home_team","
 
 # Use the Dataframe Glue Ops object to rename the columns and UNION the dataframes.
 df_ops = DataframeGlueOps(df1=dim_team_statistics_home,df2=dim_team_statistics_visitors)
-dim_team_statistics_final = df_ops.merge_and_rename(df1=dim_team_statistics_home,df2=dim_team_statistics_visitors, new_column_names = merged_columns)
+dim_team_statistics_final = df_ops.rename_and_concat(df1=dim_team_statistics_home,df2=dim_team_statistics_visitors, new_column_names = unioned_columns)
 
 # Summarize the data based on the pertaining teams and their respective league that they are in within Major League Baseball 
 dim_team_statistics_final = dim_team_statistics_final.groupby(by=['team','league'], as_index=False).sum()
@@ -71,8 +71,17 @@ dim_team_rec = dim_record_df_melted.drop(['date', 'game_no','dow','visiting_team
 # Rename certain fields, sort based on the more important stat - wins 
 dim_team_rec = dim_team_rec.rename(columns={"value": "team"}).sort_values(by='wins', ascending=False).reset_index(drop=True)
 
+# Create the team_id fields necessary to make the merge between the record df and and the dim stats df
+dim_team_rec = create_id_from_text_column(dim_team_rec, text_column='team', id_column='team_id')
+dim_team_statistics_final = create_id_from_text_column(dim_team_statistics_final, text_column='team', id_column='team_id')
+
 # Concatenate the team's record values with the statistics as new columns.
-dim_team_final = pd.concat([dim_team_rec, dim_team_statistics_final], axis=1)
+dim_team_final = pd.merge(
+        left=dim_team_rec
+        , right=dim_team_statistics_final.drop(['team'], axis=1)
+        , how="inner"
+        , on=['team_id']
+        )
 
 # Write this dataframe to a CSV file in the listed location.
 df_to_csv_dim_team_final = CSVWriter(dim_team_final)
