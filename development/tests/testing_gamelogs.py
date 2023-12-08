@@ -1,8 +1,7 @@
-from cleaned_functions import CsvToSqlite
-
+from ..functions.cleaned_functions import CsvToSqlite
 # Example usage
 csv_to_sqlite = CsvToSqlite(database_name='testing_gamelogs.db')
-csv_to_sqlite.create_table_from_csv("C:/Users/95jha/Documents/Learning/JHack_Portfolio/cleaned_files/fact_gamelogs.csv", "fact_gamelogs")
+csv_to_sqlite.create_table_from_csv("C:/Users/95jha/Documents/Learning/JHack_Portfolio/development/data/production/fact_gamelogs.csv", "fact_gamelogs")
 
 # Execute a query to retrieve data
 select_query1 = '''

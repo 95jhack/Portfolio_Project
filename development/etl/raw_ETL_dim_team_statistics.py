@@ -10,12 +10,12 @@ This file is used for
 ###############
 
 import pandas as pd
-from raw_data_extraction_functions import CSVReader, DataframeGlueOps, CSVWriter, create_id_from_text_column
-from raw_data_column_organization import gamelogs_df_column_names, unioned_columns, dim_team_stats_home_col, dim_team_stats_visitors_col, fact_gamelogs_cols
+from development.functions.raw_data_extraction_functions import CSVReader, DataframeGlueOps, CSVWriter, create_id_from_text_column
+from development.functions.raw_data_column_organization import gamelogs_df_column_names, unioned_columns, dim_team_stats_home_col, dim_team_stats_visitors_col, fact_gamelogs_cols
 
 # Read the raw gamelogs data to a pandas dataframe
 csv_reader = CSVReader(
-    file_path = "C:/Users/95jha/Documents/Learning/JHack_Portfolio/raw_files/gl2022.csv"
+    file_path = "C:/Users/95jha/Documents/Learning/JHack_Portfolio/development/data/gl2022.csv"
     , column_names=gamelogs_df_column_names
 )
 df = csv_reader.read_csv()
@@ -83,6 +83,9 @@ dim_team_final = pd.merge(
         , on=['team_id']
         )
 
-# Write this dataframe to a CSV file in the listed location.
-df_to_csv_dim_team_final = CSVWriter(dim_team_final)
-df_to_csv_dim_team_final.write_to_csv('C:/Users/95jha/Documents/Learning/JHack_Portfolio/cleaned_files/dim_team_statistics')
+
+def run_etl(df, file_path):
+    # Write this dataframe to a CSV file in the listed location.
+    df_to_csv_dim_team_final = CSVWriter(df)
+    df_to_csv_dim_team_final.write_to_csv(file_path)
+

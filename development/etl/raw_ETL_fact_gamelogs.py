@@ -10,12 +10,13 @@ This file is used for
 ###############
 
 import pandas as pd
-from raw_data_extraction_functions import CSVReader, CSVWriter
-from raw_data_column_organization import gamelogs_df_column_names, merged_columns, fact_gamelogs_cols, create_id_from_text_column
+from development.functions.raw_data_column_organization import gamelogs_df_column_names, unioned_columns, fact_gamelogs_cols
+from development.functions.raw_data_extraction_functions import CSVReader, CSVWriter, create_id_from_text_column 
+
 
 # Read the raw gamelogs data to a pandas dataframe
 csv_reader = CSVReader(
-    file_path = "C:/Users/95jha/Documents/Learning/JHack_Portfolio/raw_files/gl2022.csv"
+    file_path = "C:/Users/95jha/Documents/Learning/JHack_Portfolio/development/data/gl2022.csv"
     , column_names=gamelogs_df_column_names
 )
 df = csv_reader.read_csv()
@@ -71,6 +72,8 @@ away_gamelogs['is_home'] = away_gamelogs[['date','team','league','team_game_no',
 # Concatenate the home and away gamelogs -- effectively this acts as a UNION ALL 
 total_gamelogs = pd.concat([home_gamelogs, away_gamelogs])
 
-# Write this dataframe to a CSV file in the listed location.
-df_to_csv_total_gamelogs = CSVWriter(total_gamelogs)
-df_to_csv_total_gamelogs.write_to_csv('C:/Users/95jha/Documents/Learning/JHack_Portfolio/cleaned_files/fact_gamelogs')
+
+def run_etl(df, file_path):
+    # Write this dataframe to a CSV file in the listed location.
+    df_to_csv_total_gamelogs = CSVWriter(df)
+    df_to_csv_total_gamelogs.write_to_csv(file_path)
