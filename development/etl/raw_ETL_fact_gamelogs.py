@@ -8,6 +8,10 @@ This file is used for
 ###############
 ### Imports ###
 ###############
+import os
+import pathlib
+
+folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix()).replace('etl','data')
 
 import pandas as pd
 from development.functions.raw_data_column_organization import gamelogs_df_column_names, unioned_columns, fact_gamelogs_cols
@@ -16,7 +20,7 @@ from development.functions.raw_data_extraction_functions import CSVReader, CSVWr
 
 # Read the raw gamelogs data to a pandas dataframe
 csv_reader = CSVReader(
-    file_path = "C:/Users/95jha/Documents/Learning/JHack_Portfolio/development/data/gl2022.csv"
+    file_path = folder_path+"/gl2022.csv"
     , column_names=gamelogs_df_column_names
 )
 df = csv_reader.read_csv()
