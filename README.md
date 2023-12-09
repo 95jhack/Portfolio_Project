@@ -1,7 +1,7 @@
-# JHack_Portfolio
+# Portfolio Project
 
 Purpose:
-* This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This portfolio project will focus on data from a popular North American Sport, baseball focusing on the Major League Baseball League.
+* This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This portfolio project will focus on data from a popular North American Sport, baseball, with the statistics focusing on the Major League Baseball League 2022 season.
 
 ==================================================================================
 ==================================================================================
@@ -20,9 +20,9 @@ Topics I want to demonstrate:
 ==================================================================================
 
 Target use of the following toolsets:
-* Data Quality Testing
+* Data Quality Testing & Functional Testing
     * DBT Project 
-        * I will not be able to proceed to implement this portfolio as a DBT project. This is due to cost of Snowflake, inability to use a student based option.
+        * I will not be able to proceed to implement this portfolio as a DBT project. This is due to cost of Snowflake, inability to use a student based option for longer than 1 month.
     * Unit Testing - Python unittest Library
         * I will be writing unittests to validate that the transformed data at different stages of the project aligns with known conditions, and the expected outputs of certain functions.
 * SQL
@@ -31,15 +31,18 @@ Target use of the following toolsets:
     * Libraries in use:
         * Pandas
         * Unittest
-        * ACTION - TBD
+        * Numpy
+        * OS
+        * Pathlib
 * GIT
     * I will be using this GitHub repo, and will be using my background with GIT to display my understanding. 
-* Github CI/CD?
+* Github CI/CD
     * ACTION - TBD
 * Postman / Use of APIs
     * ACTION - TBD
 * Dashboarding Tool - Power BI
-    * Figma ---> ACTION - Develop a UI/UX
+    * Reporting File --> See presentation files directory
+    * UI UX developed using Figma
 * Python Data Visualization 
     * ACTION - matplotlib
     * ACTION - Seaborn
@@ -69,11 +72,11 @@ Facts:
 2022 Team Standings 
 2022 Team Batting Stats 
 2022 Team Pitching Stats
-2022 Player Summarized Stats
+2022 Player Summarized Stats --> Unlikely to gain free access to
 
 Potential tests to run
 * Team Wins vs. Team Wins seen in the game by game
-* Player Stats (Hits, HRs) vs. Summarized stats in game by game
+* Player Stats (Hits, HRs) vs. Summarized stats in game by game  --> Unlikely to gain free access to
 
 ==================================================================================
 ==================================================================================
