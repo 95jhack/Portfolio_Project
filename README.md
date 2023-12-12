@@ -87,6 +87,9 @@ https://www.retrosheet.org/gamelogs/glfields.txt
 https://www.retrosheet.org/gamelogs/index.html
 https://www.baseball-reference.com/leagues/majors/2022.shtml
 
+https://www.rotowire.com/baseball/stats.php?season=2022
+
+
 Potential Future References: 
 https://statsapi.mlb.com/docs/login?referrerUrl=https://statsapi.mlb.com/docs/
 

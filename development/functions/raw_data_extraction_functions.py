@@ -111,6 +111,16 @@ class CSVWriter:
         except Exception as e:
             print(f"Error: {e}")
 
+    def append_to_csv(self, file_name):
+        try:
+            if not file_name.endswith('.csv'):
+                file_name += '.csv'
+                
+            self.dataframe.to_csv(file_name, mode='a', header=False, index=False)
+            print(f"Data appended to {file_name} successfully.")
+        except Exception as e:
+            print(f"Error: {e}")
+
 class DateDimDFGenerator:
     def __init__(self, start_date, end_date):
         self.start_date = start_date
