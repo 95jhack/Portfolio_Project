@@ -185,6 +185,26 @@ class TestDates(unittest.TestCase):
 
 
 
-
 if __name__ == '__main__':
     unittest.main()
+    # Create a test suite
+    test_suite = unittest.TestLoader().loadTestsFromTestCase(TestDates)
+
+    # Create a TestResult object to capture the results
+    test_result = unittest.TestResult()
+
+    # Run the tests and collect the results
+    test_suite.run(test_result)
+
+    # Extract relevant information from the TestResult object
+    test_data = []
+    for test, error in zip(test_result.testsRun, test_result.errors):
+        test_name = str(test).split()[0]
+        error_message = error[1]
+        test_data.append({'Test Name': test_name, 'Error Message': error_message})
+
+    # Create a DataFrame from the test results
+    df = pd.DataFrame(test_data)
+
+    # Display the DataFrame
+    print(df)

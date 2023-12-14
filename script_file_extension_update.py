@@ -13,6 +13,4 @@ if __name__ == "__main__":
     file_df = build_file_df(folder_path=prod_file_prefix)
     print(file_df.head())
     listed_files = construct_file_list(df=file_df)
-    #listed_files = listed_files.remove('2022ANA.EVA')
-    #print(listed_files[1:])
     iterate_over_list(file_list=listed_files[1:], folder_path=prod_file_prefix)
