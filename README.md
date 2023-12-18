@@ -34,22 +34,22 @@ Target use of the following toolsets:
         * Numpy
         * OS
         * Pathlib
+* Docker
+    * Implemented Airflow through use of Docker Desktop. 
+* Airflow 
+    * As of 2023/12/13 - I have moved the project to use Airflow, which I have running using a Docker Container. I will be expanding the structuring of my current DAGs over time to continue to display my skills in this area.
 * GIT
-    * I will be using this GitHub repo, and will be using my background with GIT to display my understanding. 
+    * I will be using this GitHub repo, and will be using my background with GIT to display my understanding.
+* Dashboarding Tool - Power BI
+    * Reporting File --> See presentation files directory
+    * UI UX developed using Figma 
 * Github CI/CD
     * ACTION - TBD
 * Postman / Use of APIs
     * ACTION - TBD
-* Dashboarding Tool - Power BI
-    * Reporting File --> See presentation files directory
-    * UI UX developed using Figma
 * Python Data Visualization 
     * ACTION - matplotlib
     * ACTION - Seaborn
-* Docker
-    * ACTION - TBD 
-* Airflow 
-    * ACTION - TBD
 
 ==================================================================================
 ==================================================================================

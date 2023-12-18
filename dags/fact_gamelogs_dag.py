@@ -1,95 +1,88 @@
+# DAG Imports
 from airflow import DAG
 from datetime import timedelta, date, datetime
-from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
+from airflow.providers.postgres.operators.postgres import PostgresOperator
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
-import pandas as pd
-
+# Directory, Transformations, Postgres Imports
 import os
 import pathlib
+import pandas as pd
+import psycopg2
+from sqlalchemy import create_engine
 
+# ETL & formatting Imports
+from development.etl.raw_ETL_fact_gamelogs import fact_gamelogs, gamelogs_transform
+from development.functions.postgres_to_csv import postgres_to_csv
+from development.dag_sql.create_tbl_fact_gamelogs import create_tbl_gamelogs_base, create_tbl_preload_final
+
+# Directory Structuring
 folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
-raw_file_path = folder_path+"/development/data/"
 prod_file_prefix = folder_path+"/development/data/production/"
 
-from development.functions.raw_data_column_organization import gamelogs_df_column_names, unioned_columns, fact_gamelogs_cols
-from development.functions.raw_data_extraction_functions import CSVReader, CSVWriter, create_id_from_text_column 
+# Postgres Connection
+conn_string = 'postgresql+psycopg2://airflow:airflow@postgres/airflow'
+db = create_engine(conn_string)
+conn = db.connect()
+conn.autocommit = True
 
+def _read_csv_transform_load_1():
+    # Write this dataframe to postgres
+    fact_gamelogs.to_sql('gamelogs_base_df', conn, if_exists ='replace')
 
-# Read the raw gamelogs data to a pandas dataframe
-csv_reader = CSVReader(
-    file_path = raw_file_path+"gl2022.csv"
-    , column_names=gamelogs_df_column_names
-)
-df = csv_reader.read_csv()
+def _read_csv_transform_load_2():
+    fact_gamelogs_pg = pd.read_sql('gamelogs_base_df', conn)
+    preload_df = gamelogs_transform(fact_gamelogs=fact_gamelogs_pg)
+    # Write this dataframe to postgres
+    preload_df.to_sql('gamelogs_preload_df', conn, if_exists ='replace')
 
-#########################################################
-########### Object: fact_gamelogs #######################
-#########################################################
+def _store_table_as_csv():
+    postgres_to_csv(
+        folder_path=folder_path
+        , postgres_tbl='gamelogs_preload_df'
+        , output_csv='fact_gamelogs'
+    )
 
-# Filter the raw_gamelogs data to focus solely on the pertaining data required at this stage.
-fact_gamelogs = df[fact_gamelogs_cols]
-
-# Create a copy of the base data set, for home and away.
-home_gamelogs_transform = fact_gamelogs
-away_gamelogs_transform = fact_gamelogs
-
-# Rename both the home and away gamelogs to focus on a "team" of interest and their opponent.
-home_gamelogs = home_gamelogs_transform.rename(
-    columns={
-        "home_team": "team"
-        ,"home_league": "league"
-        ,"visiting_team": "opponent_team"
-        ,"visiting_league": "opponent_league"
-        ,"visiting_team_score": "opponent_score"
-        ,"home_team_score": "team_score"
-        ,"home_league_game_no":"team_game_no"
-    }).drop(['dow','visiting_league_game_no','game_no'], axis=1)
-away_gamelogs = away_gamelogs_transform.rename(
-    columns={
-        "visiting_team": "team"
-        ,"visiting_league": "league"
-        ,"home_team": "opponent_team"
-        ,"home_league": "opponent_league"
-        ,"home_team_score": "opponent_score"
-        ,"visiting_team_score": "team_score"
-        ,"visiting_league_game_no":"team_game_no"
-    }).drop(['dow','home_league_game_no','game_no'], axis=1)
-
-# Function to compare home_team_score against visiting_team_score
-def compare_scores(row):
-    if row['team_score'] > row['opponent_score']:
-        return 1
-    else:
-        return 0
- 
-# Apply the compare_scores function to create a new flag column determining whether it was a win or loss.
-home_gamelogs['win_loss'] = home_gamelogs.apply(compare_scores, axis=1)
-away_gamelogs['win_loss'] = away_gamelogs.apply(compare_scores, axis=1)
-
-# Apply a lambda function to discern whether the "team" of interest was the home or away team.
-home_gamelogs['is_home'] = home_gamelogs[['date','team','league','team_game_no','opponent_team','opponent_league','team_score','opponent_score','win_loss']].apply(lambda row: 1, axis=1)
-away_gamelogs['is_home'] = away_gamelogs[['date','team','league','team_game_no','opponent_team','opponent_league','team_score','opponent_score','win_loss']].apply(lambda row: 0, axis=1)
-
-# Concatenate the home and away gamelogs -- effectively this acts as a UNION ALL 
-total_gamelogs = pd.concat([home_gamelogs, away_gamelogs])
-
-def _run_etl():
-    # Write this dataframe to a CSV file in the listed location.
-    df = total_gamelogs
-    file_path = prod_file_prefix+'fact_gamelogs.csv'
-    df_to_csv = CSVWriter(df)
-    df_to_csv.write_to_csv(file_path)
+def _drop_interim_tbls():
+    drop_postgres_tables(table1='gamelogs_base_df', table2='gamelogs_preload_df')
 
 with DAG(
-    dag_id="fact_gamelogs"
+    dag_id="DAG_fact_gamelogs"
     , start_date=datetime(2023,12,12)
     , schedule_interval='@daily'
     , catchup=False) as dag:
 
-    process_fact = PythonOperator(
-        task_id='process_fact'
-        , python_callable=_run_etl
+    create_pg_table_1 = PostgresOperator(
+        task_id = 'create_pg_table_1'
+        , postgres_conn_id = 'postgres'
+        , sql = create_tbl_gamelogs_base
     )
 
-    process_fact
+    create_pg_table_2 = PostgresOperator(
+        task_id = 'create_pg_table_2'
+        , postgres_conn_id = 'postgres'
+        , sql = create_tbl_preload_final
+    )
+
+    read_transform_load_1 = PythonOperator(
+        task_id='read_transform_load_1'
+        , python_callable=_read_csv_transform_load_1
+    )
+
+    read_transform_load_2 = PythonOperator(
+        task_id='read_transform_load_2'
+        , python_callable=_read_csv_transform_load_2
+    )
+
+    process_fact = PythonOperator(
+        task_id='process_fact'
+        , python_callable=_store_table_as_csv
+    )
+
+    drop_pg_tables = PythonOperator(
+        task_id='drop_pg_tables'
+        , python_callable=_drop_interim_tbls
+    )
+
+    [create_pg_table_1, create_pg_table_2] >> read_transform_load_1 >> read_transform_load_2 >> process_fact >> drop_pg_tables
