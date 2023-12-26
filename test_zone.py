@@ -31,11 +31,11 @@ class TestDates(unittest.TestCase):
         file_path =  prod_file_prefix+"dim_date.csv"
     )
     date_df = csv_reader.read_csv()
-    boolean_expected_values = [False, True]
+    boolean_expected_values = ['f','t']
 
     def test_columns_match_schema(self):
         df_cols = list(self.date_df.columns.values)
-        expected_column_set = ['Date','date_id','Year','Month','Day','Month_Name'
+        expected_column_set = ['index','Date','date_id','Year','Month','Day','Month_Name'
         ,'Weekday','dayofyear','Quarter','days_in_month','is_month_start'
         ,'is_month_end','is_year_start','is_year_end','is_leap_year']
         self.assertEqual(df_cols,expected_column_set)
@@ -81,11 +81,11 @@ class TestDates(unittest.TestCase):
         self.assertTrue(max(field) == 4, min(field) == 1)
 
     def test_field_logic_4a(self):
-        field = list(np.sort(self.date_df[self.date_df['is_leap_year'] == False]['dayofyear'].unique()))
+        field = list(np.sort(self.date_df[self.date_df['is_leap_year'] == 'f']['dayofyear'].unique()))
         self.assertTrue(max(field) == 365, min(field) == 1)
 
     def test_field_logic_4b(self):
-        field = list(np.sort(self.date_df[self.date_df['is_leap_year'] == True]['dayofyear'].unique()))
+        field = list(np.sort(self.date_df[self.date_df['is_leap_year'] == 't']['dayofyear'].unique()))
         self.assertTrue(max(field) == 366, min(field) == 1)  
 
     def test_field_logic_5(self):
@@ -93,8 +93,8 @@ class TestDates(unittest.TestCase):
         self.assertTrue(max(field) == 31, min(field) == 28)
 
     def test_field_logic_6(self):
-        field = list(np.sort(self.date_df[self.date_df['is_month_start'] == True]['Day'].unique()))
+        field = list(np.sort(self.date_df[self.date_df['is_month_start'] == 't']['Day'].unique()))
         self.assertTrue(max(field) == 1, min(field) == 1)  
-        
+
 if __name__ == '__main__':
     unittest.main()
