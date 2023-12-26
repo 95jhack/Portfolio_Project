@@ -14,7 +14,7 @@ Test Plans based on the schema of each object.
 import os
 import pathlib
 folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
-prod_file_prefix = folder_path+"/development/data/production/"
+prod_file_prefix = folder_path+"/dags/development/data/production/"
 
 import numpy as np 
 import pandas as pd

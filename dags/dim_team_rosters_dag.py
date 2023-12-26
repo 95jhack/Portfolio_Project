@@ -34,17 +34,19 @@ def _read_csv_to_postgres_1():
     # Write this dataframe to postgres
     file_df = build_file_df(folder_path=event_file_prefix)
     file_df.to_sql('file_df', conn, if_exists ='replace')
+    return print(file_df.head(1))
 
 def _read_csv_to_postgres_2():
     # Write this dataframe to postgres
     read_file_df = pd.read_sql('file_df', conn)
     listed_files = construct_file_list(df=read_file_df)
-    file_list_df = pd.DataFrame(listed_files)
+    file_list_df = pd.DataFrame(listed_files,columns=['file'])
     file_list_df.to_sql('file_list_df', conn, if_exists ='replace')
-
+    return print(file_list_df.head(1))
+    
 def _run_etl_loop():
     read_file_list_df = pd.read_sql('file_list_df', conn)
-    file_list = read_file_list_df['0'].values.tolist()
+    file_list = read_file_list_df['file'].values.tolist()
     for idx, file in enumerate(file_list):
         initial_df = build_initial_df_from_file(file=file)
         if idx == 0:

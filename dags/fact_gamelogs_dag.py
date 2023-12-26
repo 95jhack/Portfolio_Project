@@ -14,7 +14,7 @@ from sqlalchemy import create_engine
 
 # ETL & formatting Imports
 from development.etl.raw_ETL_fact_gamelogs import fact_gamelogs, gamelogs_transform
-from development.functions.postgres_to_csv import postgres_to_csv
+from development.functions.postgres_to_csv import postgres_to_csv, drop_postgres_tables
 from development.dag_sql.create_tbl_fact_gamelogs import create_tbl_gamelogs_base, create_tbl_preload_final
 
 # Directory Structuring

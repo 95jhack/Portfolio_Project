@@ -17,11 +17,6 @@ The columns are renamed, and the Dataframes are unioned using the Pandas concat 
 date dimension as a pandas dataframe. Write this out as a CSV file.
 """
 
-############ REMAINING ACTIONS:
-# Add further exception handling. 
-# Add further testing
-# Add further commenting
-
 ###############
 ### Imports ###
 ###############
@@ -88,14 +83,20 @@ class DataframeGlueOps:
         Returns:
         - Unioned_df: pandas DataFrame, the Unioned DataFrame with new column names
         """
-        # Drop original column names
-        self.df1.columns=new_column_names
-        self.df2.columns=new_column_names
+        try:
+            # Drop original column names
+            self.df1.columns=new_column_names
+            self.df2.columns=new_column_names
 
-        # Append DataFrames
-        Unioned_df = pd.concat([self.df1, self.df2])
+            # Append DataFrames
+            Unioned_df = pd.concat([self.df1, self.df2])
 
-        return Unioned_df
+            return Unioned_df
+
+        except Exception as e:
+            print(f"Error: {e}")
+            print("Unioned dataframe could not be created.")
+
 
 class CSVWriter:
     def __init__(self, dataframe):
@@ -128,40 +129,53 @@ class DateDimDFGenerator:
 
     # Function to generate date range
     def daterange(self):
-        for n in range(int((self.end_date - self.start_date).days) + 1):
-            yield self.start_date + timedelta(n)
+        try:
+            for n in range(int((self.end_date - self.start_date).days) + 1):
+                yield self.start_date + timedelta(n)
+        except Exception as e:
+            print(f"Error: {e}")
 
     def dim_date_dataframe(self):
         # Generate date dimension
-        date_dimension = pd.DataFrame(self.daterange(), columns=['Date'])
+        try:
+            date_dimension = pd.DataFrame(self.daterange(), columns=['Date'])
         
-        # Extract additional date-related attributes
-        date_dimension['date_id'] = date_dimension['Date'].dt.strftime('%Y%m%d')
-        date_dimension['Date'].dt.year
-        date_dimension['Year'] = date_dimension['Date'].dt.year
-        date_dimension['Month'] = date_dimension['Date'].dt.month
-        date_dimension['Day'] = date_dimension['Date'].dt.day
-        date_dimension['Month_Name'] = date_dimension['Date'].dt.strftime('%B')
-        date_dimension['Weekday'] = date_dimension['Date'].dt.dayofweek
-        date_dimension['dayofyear'] = date_dimension['Date'].dt.dayofyear
-        date_dimension['Quarter'] = date_dimension['Date'].dt.quarter
-        date_dimension['days_in_month'] = date_dimension['Date'].dt.days_in_month
-        date_dimension['is_month_start'] = date_dimension['Date'].dt.is_month_start
-        date_dimension['is_month_end'] = date_dimension['Date'].dt.is_month_end
-        date_dimension['is_year_start'] = date_dimension['Date'].dt.is_year_start
-        date_dimension['is_year_end'] = date_dimension['Date'].dt.is_year_end
-        date_dimension['is_leap_year'] = date_dimension['Date'].dt.is_leap_year
-        return date_dimension
+            # Extract additional date-related attributes
+            date_dimension['date_id'] = date_dimension['Date'].dt.strftime('%Y%m%d')
+            date_dimension['Year'] = date_dimension['Date'].dt.year
+            date_dimension['Month'] = date_dimension['Date'].dt.month
+            date_dimension['Day'] = date_dimension['Date'].dt.day
+            date_dimension['Month_Name'] = date_dimension['Date'].dt.strftime('%B')
+            date_dimension['Weekday'] = date_dimension['Date'].dt.dayofweek
+            date_dimension['dayofyear'] = date_dimension['Date'].dt.dayofyear
+            date_dimension['Quarter'] = date_dimension['Date'].dt.quarter
+            date_dimension['days_in_month'] = date_dimension['Date'].dt.days_in_month
+            date_dimension['is_month_start'] = date_dimension['Date'].dt.is_month_start
+            date_dimension['is_month_end'] = date_dimension['Date'].dt.is_month_end
+            date_dimension['is_year_start'] = date_dimension['Date'].dt.is_year_start
+            date_dimension['is_year_end'] = date_dimension['Date'].dt.is_year_end
+            date_dimension['is_leap_year'] = date_dimension['Date'].dt.is_leap_year
+            date_dimension['Date'] = date_dimension['Date'].dt.strftime("%Y-%m-%d")
 
+            return date_dimension
+
+        except Exception as e:
+            print(f"Error: {e}")
+            print("Date dataframe could not be created.")
 
 def create_id_from_text_column(df_input, text_column, id_column='id'):
     # Sort unique values from the text column alphabetically
-    unique_values = sorted(df_input[text_column].unique())
+    try:
+        unique_values = sorted(df_input[text_column].unique())
 
-    # Create a mapping of text values to alphabetical IDs
-    id_mapping = {value: i+1 for i, value in enumerate(unique_values)}
+        # Create a mapping of text values to alphabetical IDs
+        id_mapping = {value: i+1 for i, value in enumerate(unique_values)}
 
-    # Apply the mapping to create the ID column
-    df_input[id_column] = df_input[text_column].map(id_mapping)
+        # Apply the mapping to create the ID column
+        df_input[id_column] = df_input[text_column].map(id_mapping)
 
-    return df_input
+        return df_input
+
+    except Exception as e:
+        print(f"Error: {e}")
+        print("Column could not be mapped properly.")

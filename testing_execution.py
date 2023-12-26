@@ -13,18 +13,17 @@ Test Plans based on the schema of each object.
 '''
 import os
 import pathlib
-folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
-prod_file_prefix = folder_path+"/development/data/production/"
-
 import numpy as np 
 import pandas as pd
 import unittest
 
-from development.tests import testing_gamelogs as tg
-from development.tests import testing_teams as tt
-# from development.tests import testing_dates as td
-from development.functions.raw_data_extraction_functions import CSVReader
+from dags.development.tests import testing_gamelogs as tg
+from dags.development.tests import testing_teams as tt
+from dags.development.tests import testing_dates as td
+from dags.development.functions.raw_data_extraction_functions import CSVReader
 
+folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
+prod_file_prefix = folder_path+"/dags/development/data/production/"
 
 #########################################################
 ########### Testing Object: dim_team_statistics #########
@@ -175,13 +174,35 @@ class TestDates(unittest.TestCase):
             - if is_year_end = True, Day must equal 31, Month = 12
             - if is_month_end = True, Day must be between 28 and 31.
     '''
-    # def logic_based_testing(self):
+class TestEvents(unittest.TestCase):
+    # Read the cleaned dim team statistics data to a pandas dataframe
+    csv_reader1 = CSVReader(
+        file_path = prod_file_prefix+"dim_team_statistics.csv"
+    )
+    dim_team_stats_df = csv_reader1.read_csv()
 
-    #     def testing_gamelogs_total_game_count(self):
-    #         away_games_per_year = 81 # This is correct for this year, but not the case for all seasons. Ex: COVID-19 impacted season duration.
-    #         home_games_per_year = 81 # This is correct for this year, but not the case for all seasons. Ex: COVID-19 impacted season duration.
-    #         testing_gamelogs_games_per_year = tg.rows_away+tg.rows_home
-    #         self.assertEqual(testing_gamelogs_games_per_year,home_games_per_year+away_games_per_year)
+    # Read the cleaned fact events data to a pandas dataframe
+    csv_reader2 = CSVReader(
+        file_path = prod_file_prefix+"fact_game_events.csv"
+    )
+    fact_game_events_df = csv_reader2.read_csv()
+
+    def test_duplicate_check(self):
+        expected_result_no_dupes = len(self.fact_game_events_df)-len(self.fact_game_events_df['index'].drop_duplicates())
+        self.assertTrue(expected_result_no_dupes == 0)
+
+    def test_null_column_check(self):
+        nulls_for_entire_table = self.fact_game_events_df.isnull().sum().sum()
+        self.assertTrue(nulls_for_entire_table == 0)
+
+    def test_fact_game_events_field_logic_1(self):
+        fact_game_events_field_sum = self.fact_game_events_df['HR'].sum()
+        dim_team_stats_field_sum = self.dim_team_stats_df['HR'].sum()
+        self.assertTrue(fact_game_events_field_sum == dim_team_stats_field_sum) 
+
+
+
+
 
 
 

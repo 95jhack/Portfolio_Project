@@ -21,7 +21,7 @@ def build_file_df(folder_path):
     # Read the raw gamelogs data to a pandas dataframe
     csv_reader = CSVReader(
         file_path = folder_path+"TEAM2022.csv"
-        , column_names=['col1','col2','col3','col4']
+        , column_names=['team','league','city','teamlogo']
     )
     file_df = csv_reader.read_csv()
     return file_df
@@ -31,7 +31,7 @@ def construct_file_list(df):
 
     for index, row in df.iterrows():
         
-        value_to_append_events = str(2022)+str(row['col1'])+'.csv'
+        value_to_append_events = str(2022)+str(row['team'])+'.csv'
 
         # Append the value to the list
         file_list.append(value_to_append_events)
@@ -60,8 +60,8 @@ def build_initial_df_from_file(file):
         else:
             return 'see_prev_visiting_team'
 
-    df2["team_date_id"] = df2.apply(recent_id_field, axis=1)
-    df2["visiting_team"] = df2.apply(visiting_team, axis=1)
+    df2['team_date_id'] = df2.apply(recent_id_field, axis=1)
+    df2['visiting_team'] = df2.apply(visiting_team, axis=1)
 
     return df2
 

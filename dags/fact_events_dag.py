@@ -17,6 +17,7 @@ from sqlalchemy import create_engine
 from development.etl.raw_ETL_fact_events import build_file_df, construct_file_list
 from development.etl.raw_ETL_fact_events import build_initial_df_from_file, iterate_col, final_filter, stat_generation, run_etl, run_append_etl
 from development.dag_sql.create_tbl_events import create_tbl, create_tbl_list
+from development.functions.postgres_to_csv import drop_postgres_tables
 
 # Directory Structuring
 folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
@@ -33,17 +34,19 @@ def _read_csv_to_postgres_1():
     # Write this dataframe to postgres
     file_df = build_file_df(folder_path=event_file_prefix)
     file_df.to_sql('file_df', conn, if_exists ='replace')
+    return print(file_df.head(1))
 
 def _read_csv_to_postgres_2():
     # Write this dataframe to postgres
     read_file_df = pd.read_sql('file_df', conn)
     listed_files = construct_file_list(df=read_file_df)
-    file_list_df = pd.DataFrame(listed_files)
+    file_list_df = pd.DataFrame(listed_files,columns=['file'])
     file_list_df.to_sql('file_list_df', conn, if_exists ='replace')
+    return print(file_list_df.head(1))
 
 def _run_etl_loop():
     read_file_list_df = pd.read_sql('file_list_df', conn)
-    file_list = read_file_list_df['0'].values.tolist()
+    file_list = read_file_list_df['file'].values.tolist()
     for idx, file in enumerate(file_list):
         initial_df = build_initial_df_from_file(file=file)
         iterated_df = iterate_col(input_df=initial_df)

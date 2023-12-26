@@ -1,8 +1,10 @@
 from ..functions.cleaned_functions import CsvToSqlite
 
+csv_link = "C:/Users/95jha/Documents/Learning/Portfolio_Project/dags/development/data/production/dim_team_statistics.csv"
+
 # Example usage
 csv_to_sqlite = CsvToSqlite(database_name='testing_teams.db')
-csv_to_sqlite.create_table_from_csv("C:/Users/95jha/Documents/Learning/JHack_Portfolio/development/data/production/dim_team_statistics.csv", "dim_team_stats")
+csv_to_sqlite.create_table_from_csv(csv_link, "dim_team_stats")
 
 # Execute a query to retrieve data
 select_query = '''

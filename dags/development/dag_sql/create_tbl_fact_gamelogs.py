@@ -1,15 +1,15 @@
 
 create_tbl_preload_final =      '''
         CREATE TABLE IF NOT EXISTS gamelogs_preload_df(
-            date TEXT NOT NULL
+            date INTEGER NOT NULL
             ,team TEXT NOT NULL
             ,league TEXT NOT NULL
-            ,team_game_no TEXT NOT NULL
+            ,team_game_no INTEGER NOT NULL
             ,opponent_team TEXT NOT NULL
             ,opponent_league TEXT NOT NULL
-            ,team_score TEXT NOT NULL
-            ,opponent_score TEXT NOT NULL
-            ,win_loss TEXT NOT NULL
+            ,team_score INTEGER NOT NULL
+            ,opponent_score INTEGER NOT NULL
+            ,win_loss INTEGER NOT NULL
         );
         '''
 
