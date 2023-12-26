@@ -197,9 +197,12 @@ class TestEvents(unittest.TestCase):
 
     def test_fact_game_events_field_logic_1(self):
         fact_game_events_field_sum = self.fact_game_events_df['HR'].sum()
-        dim_team_stats_field_sum = self.dim_team_stats_df['HR'].sum()
-        self.assertTrue(fact_game_events_field_sum == dim_team_stats_field_sum) 
-
+        dim_team_stats_field_sum = self.dim_team_stats_df['hr'].sum()
+        # if fact_game_events_field_sum != dim_team_stats_field_sum:
+        #     return f"Fields are not currently aligned. Summed Team Statistics shows field total as {dim_team_stats_field_sum}, whereas the summed events files show the total as {fact_game_events_field_sum}, please investigate the logic accordingly."
+        # else:
+        #     return "Results are aligned. Test is passing."
+        self.assertTrue(fact_game_events_field_sum == dim_team_stats_field_sum)
 
 
 
