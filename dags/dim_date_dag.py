@@ -36,7 +36,7 @@ def _read_csv_to_postgres():
     generator = DateDimDFGenerator(dim_start_date, dim_end_date)
     # Use this date series to populate a sample pandas dataframe for upload.
     date_dimension_df = generator.dim_date_dataframe()
-    date_dimension_df.to_sql('date_df', conn, if_exists ='replace')
+    date_dimension_df.to_sql('date_df', conn, if_exists ='replace', index=False)
 
 def _store_table_as_csv():
     postgres_to_csv(

@@ -29,7 +29,7 @@ conn.autocommit = True
 
 def _read_csv_transform_load():
     # Write this dataframe to postgres
-    dim_team_final.to_sql('pre_load_df', conn, if_exists ='replace')
+    dim_team_final.to_sql('pre_load_df', conn, if_exists ='replace', index=False)
 
 def _store_table_as_csv():
     postgres_to_csv(

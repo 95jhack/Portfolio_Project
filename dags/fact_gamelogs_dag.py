@@ -29,13 +29,13 @@ conn.autocommit = True
 
 def _read_csv_transform_load_1():
     # Write this dataframe to postgres
-    fact_gamelogs.to_sql('gamelogs_base_df', conn, if_exists ='replace')
+    fact_gamelogs.to_sql('gamelogs_base_df', conn, if_exists ='replace', index=False)
 
 def _read_csv_transform_load_2():
     fact_gamelogs_pg = pd.read_sql('gamelogs_base_df', conn)
     preload_df = gamelogs_transform(fact_gamelogs=fact_gamelogs_pg)
     # Write this dataframe to postgres
-    preload_df.to_sql('gamelogs_preload_df', conn, if_exists ='replace')
+    preload_df.to_sql('gamelogs_preload_df', conn, if_exists ='replace', index=False)
 
 def _store_table_as_csv():
     postgres_to_csv(

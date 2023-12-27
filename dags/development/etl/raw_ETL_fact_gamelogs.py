@@ -76,5 +76,7 @@ def gamelogs_transform(fact_gamelogs):
 
     # Concatenate the home and away gamelogs -- effectively this acts as a UNION ALL 
     total_gamelogs = pd.concat([home_gamelogs, away_gamelogs])
+
+    #total_gamelogs = total_gamelogs_initial.drop(['level_0'], axis=1)
     
     return total_gamelogs

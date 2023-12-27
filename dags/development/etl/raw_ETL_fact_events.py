@@ -104,6 +104,7 @@ def final_filter(input_df):
     return renamed_filtered_df.drop(['visiting_team'], axis=1)
 
 def stat_generation(input_df):
+    input_df["PA"] = 1
     input_df["AB"] = 1
     input_df["H"] = 0
     input_df["Double"] = 0
