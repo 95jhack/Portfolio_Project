@@ -1,32 +1,19 @@
 # Portfolio Project
 
-Purpose:
-* This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This portfolio project will focus on data from a popular North American Sport, baseball, with the statistics focusing on the Major League Baseball League 2022 season.
+Intro: 
+* Hello my name is Jon Hack. I am a Data Engineer from British Columbia, Canada. I am passionate learner within the space of Data Engineering. This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This project is 100% for non-commercial use, and is used for demonstration purposes only. This portfolio project will focus on data from a popular North American Sport, baseball, with the statistics focusing on the Major League Baseball League 2022 season.
 
-==================================================================================
-==================================================================================
-==================================================================================
-
-Topics I want to demonstrate:
-* Extract, Transfer, Loading (ETL)
+The topics I will cover through building out this project are: 
+* Extract, Transfer, Loading (ETL) Development
+* ETL orchastration
 * Data Cleansing
 * Data Modelling
 * Data Visualization
 * Data Quality Validation
 * Data Quality Testing
+* Continuous Integration 
 
-==================================================================================
-==================================================================================
-==================================================================================
-
-Target use of the following toolsets:
-* Data Quality Testing & Functional Testing
-    * DBT Project 
-        * I will not be able to proceed to implement this portfolio as a DBT project. This is due to cost of Snowflake, inability to use a student based option for longer than 1 month.
-    * Unit Testing - Python unittest Library
-        * I will be writing unittests to validate that the transformed data at different stages of the project aligns with known conditions, and the expected outputs of certain functions.
-* SQL
-    * Currently, I will be using SQLite3 in order to display my abilities writing queries for this project.
+The tech stack used within this Project is as follows: 
 * Python
     * Libraries in use:
         * Pandas
@@ -34,6 +21,8 @@ Target use of the following toolsets:
         * Numpy
         * OS
         * Pathlib
+* SQL
+    * Currently, I will be writing data to PostgreSQL tables as intermediate steps within my DAGs
 * Docker
     * Implemented Airflow through use of Docker Desktop. 
 * Airflow 
@@ -43,53 +32,31 @@ Target use of the following toolsets:
 * Dashboarding Tool - Power BI
     * Reporting File --> See presentation files directory
     * UI UX developed using Figma 
-* Github CI/CD
-    * ACTION - TBD
+* Data Quality Testing & Functional Testing
+    * Unit Testing - Python unittest Library
+        * I will be writing unittests to validate that the transformed data at different stages of the project aligns with known conditions, and the expected outputs of certain functions.
+* CI/CD
+    * I will be setting up a basic CI pipeline to ensure that following any changes to the project that the corresponding data is properly tested. 
+    * ACTION - continue to build upon this pipeline. 
 * Postman / Use of APIs
     * ACTION - TBD
 * Python Data Visualization 
     * ACTION - matplotlib
     * ACTION - Seaborn
 
-==================================================================================
-==================================================================================
-==================================================================================
+* Data Model
+    * Dimensions:
+        * Team Rosters
+        * Team Stats (ACTION ---> Change to a FACT?)
+        * Dates
+    * Facts:
+        * Events
+        * Gamelogs
 
-Dimensions:
-* Individual player stats
-* Team Stats
-* Dates
-  
-Facts:
-* Game by Game Stats - Player
-* Game by Game Stats - Team
-
-==================================================================================
-==================================================================================
-==================================================================================
-
-2022 Data from Major League Baseball - Game by Game Logs
-2022 Team Standings 
-2022 Team Batting Stats 
-2022 Team Pitching Stats
-2022 Player Summarized Stats --> Unlikely to gain free access to
-
-Potential tests to run
-* Team Wins vs. Team Wins seen in the game by game
-* Player Stats (Hits, HRs) vs. Summarized stats in game by game  --> Unlikely to gain free access to
-
-==================================================================================
-==================================================================================
-==================================================================================
-
-References:
-https://www.retrosheet.org/gamelogs/glfields.txt
-https://www.retrosheet.org/gamelogs/index.html
-https://www.baseball-reference.com/leagues/majors/2022.shtml
-
-https://www.rotowire.com/baseball/stats.php?season=2022
-
-
-Potential Future References: 
-https://statsapi.mlb.com/docs/login?referrerUrl=https://statsapi.mlb.com/docs/
-
+* References:
+    * Events
+        * Link to Year by Year Events - https://www.retrosheet.org/game.htm
+        * Detailed Description of Events File - https://www.retrosheet.org/eventfile.htm
+    * Gamelogs
+        * Link to Year by Year Gamelogs - https://www.retrosheet.org/gamelogs/index.html
+        * Column order of the Gamelogs file - https://www.retrosheet.org/gamelogs/glfields.txt

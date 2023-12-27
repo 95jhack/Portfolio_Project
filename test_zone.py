@@ -155,7 +155,7 @@ class TestTeams(unittest.TestCase):
         file_path = prod_file_prefix+"dim_team_statistics.csv"
     )
     teams_df = csv_reader.read_csv()
-    print('Data from the fact_gamelogs object has been read to a DataFrame. Testing to begin.')
+    print('Data from the dim_team_statistics object has been read to a DataFrame. Testing to begin.')
 
     def test_columns_match_schema(self):
         df_cols = list(self.teams_df.columns.values)
@@ -190,6 +190,7 @@ class TestFactEvents(unittest.TestCase):
         file_path = prod_file_prefix+"fact_game_events.csv"
     )
     fact_game_events_df = csv_reader2.read_csv()
+    print('Data from the fact_game_events object has been read to a DataFrame. Testing to begin.')
 
     def test_columns_match_schema(self):
         df_cols = list(self.fact_game_events_df.columns.values)
@@ -222,6 +223,7 @@ class TestRosters(unittest.TestCase):
         file_path = prod_file_prefix+"dim_team_rosters.csv"
     )
     dim_rosters_df = csv_reader.read_csv()
+    print('Data from the dim_team_rosters object has been read to a DataFrame. Testing to begin.')
 
     def test_columns_match_schema(self):
         df_cols = list(self.dim_rosters_df.columns.values)
@@ -235,8 +237,6 @@ class TestRosters(unittest.TestCase):
     def test_null_column_check(self):
         nulls_for_entire_table = self.dim_rosters_df.isnull().sum().sum()
         self.assertTrue(nulls_for_entire_table == 0)
-
-
 
 if __name__ == '__main__':
     unittest.main()
