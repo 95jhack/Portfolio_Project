@@ -23,6 +23,33 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Check for required files
+      run: |
+        if [ ! -f "dim_date.csv" ]; then
+          echo "Error: dim_date.csv is missing."
+          exit 1
+        fi
+
+        if [ ! -f "dim_team_rosters.csv" ]; then
+          echo "Error: dim_team_rosters.csv is missing."
+          exit 1
+        fi
+
+        if [ ! -f "dim_team_statistics.csv" ]; then
+          echo "Error: dim_team_statistics.csv is missing."
+          exit 1
+        fi
+
+        if [ ! -f "fact_game_events.csv" ]; then
+          echo "Error: fact_game_events.csv is missing."
+          exit 1
+        fi
+
+        if [ ! -f "fact_gamelogs.csv" ]; then
+          echo "Error: fact_gamelogs.csv is missing."
+          exit 1
+        fi
+
     - name: Run tests
       run: python test_zone.py
       
