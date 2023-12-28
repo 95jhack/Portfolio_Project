@@ -1,7 +1,7 @@
 # Portfolio Project
 
 Intro: 
-* Hello my name is Jon Hack. I am a Data Engineer from British Columbia, Canada. I am passionate learner within the space of Data Engineering. This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This project is 100% for non-commercial use, and is used for demonstration purposes only. This portfolio project will focus on data from a popular North American Sport, baseball, with the statistics focusing on the Major League Baseball League 2022 season.
+* Hello my name is Jon Hack. I am a Data Engineer from British Columbia, Canada. I am passionate learner within the spaces of Data Engineering & Data Analytics. This is my portfolio space to demonstrate my skills, and experience within the spaces of Data Engineering and Data Analysis. This project is 100% for non-commercial use, and is used for demonstration purposes only. This portfolio project will focus on data from a popular North American Sport, baseball, with the statistics focusing on the Major League Baseball League 2022 season.
 
 The topics I will cover through building out this project are: 
 * Extract, Transfer, Loading (ETL) Development
