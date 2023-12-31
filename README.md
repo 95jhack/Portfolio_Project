@@ -43,7 +43,6 @@ The tech stack used within this Project is as follows:
             2. Test column Set
             3. Null Testing 
             4. Variable Type Testing
-            ACTION - TO DO
             5. Aggregated Testing
             6. Logic-based Testing
             7. Illegal Column Values Testing

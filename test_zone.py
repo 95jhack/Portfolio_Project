@@ -41,12 +41,25 @@ class TestDates(unittest.TestCase):
 
     boolean_expected_values = ['f','t']
 
-    def test_columns_match_schema(self):
-        df_cols = list(self.date_df.columns.values)
-        expected_column_set = ['Date','date_id','Year','Month','Day','Month_Name'
-        ,'Weekday','dayofyear','Quarter','days_in_month','is_month_start'
-        ,'is_month_end','is_year_start','is_year_end','is_leap_year']
-        self.assertEqual(df_cols,expected_column_set)
+    def test_table_var_types(self):
+        # Create the produced df from the underlying ETL processes. 
+        # This df will use the series focused on the column names and dtypes, 
+        # this will then have its index reset so the column names are moved from the index to a column within the dataframe.
+        # The columns are then renamed accordingly.
+        produced_df = pd.DataFrame(self.date_df.dtypes).reset_index().rename(
+            columns={"index": "column_name",0: "data_type"}
+        )
+        # Using the projected schemas listed within the documentation, the organization of column names and data types are clear.
+        expected_df_structure = {
+            'column_name': ['Date', 'date_id', 'Year', 'Month','Day','Month_Name','Weekday','dayofyear','Quarter','days_in_month','is_month_start','is_month_end','is_year_start','is_year_end','is_leap_year']
+            , 'data_type': ['object','int64','int64','int64','int64','object','int64','int64','int64','int64','object','object','object','object','object']
+        }
+        # Using the expected df structure, create the resulting dataframe. 
+        expected_df = pd.DataFrame.from_dict(expected_df_structure)
+        variable_type_check_result = expected_df.equals(produced_df)
+        self.assertTrue(variable_type_check_result == True)
+
+    # ADD REFERENTIAL INTEGRITY TESTING 
 
     def test_duplicate_check(self):
         expected_result_no_dupes = len(self.date_df)-len(self.date_df['date_id'].drop_duplicates())
@@ -130,12 +143,39 @@ class TestGameLogs(unittest.TestCase):
     )
     gamelogs_df = csv_reader.read_csv()
     print('Data from the fact_gamelogs object has been read to a DataFrame. Testing to begin.')
+    
+    # Read the cleaned dim date data to a pandas dataframe
+    csv_reader1 = CSVReader(
+        file_path =  prod_file_prefix+"dim_date.csv"
+    )
+    date_df = csv_reader1.read_csv()
 
-    def test_columns_match_schema(self):
-        df_cols = list(self.gamelogs_df.columns.values)
-        expected_column_set = ['date','opponent_team','opponent_league','team','league'
-        ,'team_game_no','opponent_score','team_score','win_loss','is_home']
-        self.assertEqual(df_cols,expected_column_set)
+    def test_table_var_types(self):
+        # Create the produced df from the underlying ETL processes. 
+        # This df will use the series focused on the column names and dtypes, 
+        # this will then have its index reset so the column names are moved from the index to a column within the dataframe.
+        # The columns are then renamed accordingly.
+        produced_df = pd.DataFrame(self.gamelogs_df.dtypes).reset_index().rename(
+            columns={"index": "column_name",0: "data_type"}
+        )
+        # Using the projected schemas listed within the documentation, the organization of column names and data types are clear.
+        expected_df_structure = {
+            'column_name': ['date', 'opponent_team', 'opponent_league', 'team','league','team_game_no','opponent_score','team_score','win_loss','is_home']
+            , 'data_type': ['int64','object','object','object','object','int64','int64','int64','int64','int64']
+        }
+        # Using the expected df structure, create the resulting dataframe. 
+        expected_df = pd.DataFrame.from_dict(expected_df_structure)
+        variable_type_check_result = expected_df.equals(produced_df)
+        self.assertTrue(variable_type_check_result == True)
+
+    def test_referential_integrity_dates(self):
+        date_df_update = pd.DataFrame(self.date_df['date_id'])
+        produced_df = pd.DataFrame(self.gamelogs_df['date']).sort_values(by='date', ascending=True).drop_duplicates().reset_index(drop=True).rename(columns={"date": "date_id"})
+        # Original unique row count of date_id's in the produced DF
+        produced_df_length = produced_df.shape[0]
+        # Number of matching records between the 2 dataframes. This is determined based on the use of an inner join.
+        matching_records_df_length = pd.merge(produced_df, date_df_update, on=['date_id'], how='inner').shape[0]
+        self.assertEqual(produced_df_length,matching_records_df_length)
 
     def test_duplicate_check(self):
         expected_result_no_dupes = len(self.gamelogs_df)-len(self.gamelogs_df[['date','opponent_team','team_game_no']].drop_duplicates())
@@ -157,10 +197,25 @@ class TestTeams(unittest.TestCase):
     teams_df = csv_reader.read_csv()
     print('Data from the dim_team_statistics object has been read to a DataFrame. Testing to begin.')
 
-    def test_columns_match_schema(self):
-        df_cols = list(self.teams_df.columns.values)
-        expected_column_set = ['team','wins','losses','team_id','league','ab','h','dbl','trpl','hr','rbi','sh','sf','hbp','bb','bb_int','so','sb','cs','gidp','ci','lob','ptchrs','er','er_team','wp','balk','po','asst','err','pb','dbl_def','trpl_def']
-        self.assertEqual(df_cols,expected_column_set)
+    def test_table_var_types(self):
+        # Create the produced df from the underlying ETL processes. 
+        # This df will use the series focused on the column names and dtypes, 
+        # this will then have its index reset so the column names are moved from the index to a column within the dataframe.
+        # The columns are then renamed accordingly.
+        produced_df = pd.DataFrame(self.teams_df.dtypes).reset_index().rename(
+            columns={"index": "column_name",0: "data_type"}
+        )
+        # Using the projected schemas listed within the documentation, the organization of column names and data types are clear.
+        expected_df_structure = {
+            'column_name': ['team','wins','losses','team_id','league','ab','h','dbl','trpl','hr','rbi','sh','sf','hbp','bb','bb_int','so','sb','cs','gidp','ci','lob','ptchrs','er','er_team','wp','balk','po','asst','err','pb','dbl_def','trpl_def']
+            , 'data_type': ['object','int64','int64','int64','object','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64']
+        }
+        # Using the expected df structure, create the resulting dataframe. 
+        expected_df = pd.DataFrame.from_dict(expected_df_structure)
+        variable_type_check_result = expected_df.equals(produced_df)
+        self.assertTrue(variable_type_check_result == True)
+
+    # ADD REFERENTIAL INTEGRITY TESTING 
 
     def test_duplicate_check(self):
         expected_result_no_dupes = len(self.teams_df)-len(self.teams_df['team_id'].drop_duplicates())
@@ -192,10 +247,25 @@ class TestFactEvents(unittest.TestCase):
     fact_game_events_df = csv_reader2.read_csv()
     print('Data from the fact_game_events object has been read to a DataFrame. Testing to begin.')
 
-    def test_columns_match_schema(self):
-        df_cols = list(self.fact_game_events_df.columns.values)
-        expected_column_set = ['index','event_type','inning_no','home_team','player_id','count_on_batter','pitches_to_batter','event_describer','team','date_id','PA','AB','H','Double','Triple','HR','RBI','BB','BB_int','HBP','SH','SF','SB','CS','GIDP','SO']
-        self.assertEqual(df_cols,expected_column_set)
+    def test_table_var_types(self):
+        # Create the produced df from the underlying ETL processes. 
+        # This df will use the series focused on the column names and dtypes, 
+        # this will then have its index reset so the column names are moved from the index to a column within the dataframe.
+        # The columns are then renamed accordingly.
+        produced_df = pd.DataFrame(self.fact_game_events_df.dtypes).reset_index().rename(
+            columns={"index": "column_name",0: "data_type"}
+        )
+        # Using the projected schemas listed within the documentation, the organization of column names and data types are clear.
+        expected_df_structure = {
+            'column_name': ['index','event_type','inning_no','home_team','player_id','count_on_batter','pitches_to_batter','event_describer','team','date_id','PA','AB','H','Double','Triple','HR','RBI','BB','BB_int','HBP','SH','SF','SB','CS','GIDP','SO']
+            , 'data_type': ['int64','object','int64','int64','object','float64','object','object','object','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64','int64']
+        }
+        # Using the expected df structure, create the resulting dataframe. 
+        expected_df = pd.DataFrame.from_dict(expected_df_structure)
+        variable_type_check_result = expected_df.equals(produced_df)
+        self.assertTrue(variable_type_check_result == True)
+
+    # ADD REFERENTIAL INTEGRITY TESTING 
 
     def test_duplicate_check(self):
         expected_result_no_dupes = len(self.fact_game_events_df)-len(self.fact_game_events_df[['index','inning_no','player_id','event_describer','date_id']].drop_duplicates())
@@ -225,10 +295,23 @@ class TestRosters(unittest.TestCase):
     dim_rosters_df = csv_reader.read_csv()
     print('Data from the dim_team_rosters object has been read to a DataFrame. Testing to begin.')
 
-    def test_columns_match_schema(self):
-        df_cols = list(self.dim_rosters_df.columns.values)
-        expected_column_set = ['player_id','lastname','firstname','handedness_batting','handedness_throwing','team','position']
-        self.assertEqual(df_cols,expected_column_set)
+    def test_table_var_types(self):
+        # Create the produced df from the underlying ETL processes. 
+        # This df will use the series focused on the column names and dtypes, 
+        # this will then have its index reset so the column names are moved from the index to a column within the dataframe.
+        # The columns are then renamed accordingly.
+        produced_df = pd.DataFrame(self.dim_rosters_df.dtypes).reset_index().rename(
+            columns={"index": "column_name",0: "data_type"}
+        )
+        # Using the projected schemas listed within the documentation, the organization of column names and data types are clear.
+        expected_df_structure = {
+            'column_name': ['player_id','lastname','firstname','handedness_batting','handedness_throwing','team','position']
+            , 'data_type': ['object','object','object','object','object','object','object']
+        }
+        # Using the expected df structure, create the resulting dataframe. 
+        expected_df = pd.DataFrame.from_dict(expected_df_structure)
+        variable_type_check_result = expected_df.equals(produced_df)
+        self.assertTrue(variable_type_check_result == True)
 
     def test_duplicate_check(self):
         expected_result_no_dupes = len(self.dim_rosters_df)-len(self.dim_rosters_df[['player_id','team']].drop_duplicates())
