@@ -18,6 +18,7 @@ from development.etl.raw_ETL_dim_rosters import build_file_df, construct_file_li
 from development.etl.raw_ETL_dim_rosters import build_initial_df_from_file, run_etl, run_append_etl
 from development.dag_sql.create_tbl_events import create_tbl, create_tbl_list
 from development.functions.postgres_to_csv import drop_postgres_tables
+from development.functions.raw_data_extraction_functions import CSVReader
 
 # Directory Structuring
 folder_path = str(pathlib.PureWindowsPath(os.path.abspath(os.path.dirname(__file__))).as_posix())
@@ -53,6 +54,30 @@ def _run_etl_loop():
             run_etl(df=initial_df,file_path=prod_file_prefix+'dim_team_rosters')
         else:
             run_append_etl(df=initial_df,file_path=prod_file_prefix+'dim_team_rosters')
+
+def _run_roster_filter():
+    # Read the cleaned fact events data to a pandas dataframe
+    csv_reader = CSVReader(
+        file_path = prod_file_prefix+"fact_game_events.csv"
+    )
+    fact_game_events_df = csv_reader.read_csv()
+    fact_game_events_df_players = pd.DataFrame(fact_game_events_df['player_id']).sort_values(by='player_id', ascending=True).drop_duplicates().reset_index(drop=True)
+    # Read the cleaned fact events data to a pandas dataframe
+    csv_reader = CSVReader(
+        file_path = prod_file_prefix+"dim_team_rosters.csv"
+    )
+    dim_team_rosters_df = csv_reader.read_csv()
+    result_df = pd.merge(
+        dim_team_rosters_df
+        , fact_game_events_df_players
+        , on=['player_id']
+        , how='inner'
+    )
+    print(result_df.shape)    
+    run_etl(
+        df=result_df
+        , file_path=prod_file_prefix+'dim_team_rosters'
+    )
 
 def _drop_interim_tbls():
     drop_postgres_tables(table1='file_df', table2='file_list_df')
@@ -90,9 +115,14 @@ with DAG(
         , python_callable=_run_etl_loop
     )
 
+    process_dimension_filter = PythonOperator(
+        task_id='process_dimension_filter'
+        , python_callable=_run_roster_filter
+    )
+
     drop_pg_tables = PythonOperator(
         task_id='drop_pg_tables'
         , python_callable=_drop_interim_tbls
     )
 
-    [create_pg_table_1, create_pg_table_2] >> read_transform_load_1 >> read_transform_load_2 >> process_dimension >> drop_pg_tables 
+    [create_pg_table_1, create_pg_table_2] >> read_transform_load_1 >> read_transform_load_2 >> process_dimension >> process_dimension_filter >> drop_pg_tables 
