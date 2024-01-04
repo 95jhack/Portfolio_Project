@@ -305,6 +305,8 @@ class TestFactEvents(unittest.TestCase):
 
     # referential integrity test on players within the fact gamelogs object
     def test_referential_integrity_players(self):
+        # There are going to be multiple records sharing the same player_id, they will have different team values however. 
+        # Therefore, for the purposes of testing, only the player_id is currently considered.
         game_events_df_players = pd.DataFrame(self.fact_game_events_df['player_id']).sort_values(by='player_id', ascending=True).drop_duplicates().reset_index(drop=True)
         players_df_compare = pd.DataFrame(self.dim_rosters_df['player_id']).sort_values(by='player_id', ascending=True).drop_duplicates()
         test_result = referential_integrity_testing(
