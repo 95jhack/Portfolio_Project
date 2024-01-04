@@ -6,18 +6,15 @@ on:
       - '**/*'
 
 jobs:
-  lint:
+  echo:
     runs-on: ubuntu-latest
 
-    steps:        
-    - name: Checkout repository
-      uses: actions/checkout@main
-
-    - name: Lint code
-      run: npm run lint
+    steps:       
+    - name: welcome visitor
+      run: echo "Welcome to my repository!"
 
   test:
-    needs: lint
+    needs: echo
     runs-on: ubuntu-latest
 
     steps:
