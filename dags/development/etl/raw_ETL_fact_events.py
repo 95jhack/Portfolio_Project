@@ -113,7 +113,15 @@ def stat_generation(input_df):
     input_df["1-H"] = 0
     input_df["2-H"] = 0
     input_df["3-H"] = 0
+    input_df["1-H(ER)"] = 0
+    input_df["2-H(ER)"] = 0
+    input_df["3-H(ER)"] = 0
+    input_df["1-H(NR)"] = 0
+    input_df["2-H(NR)"] = 0
+    input_df["3-H(NR)"] = 0
     input_df["ER"] = 0
+    input_df["NR"] = 0
+    input_df["NORBI"] = 0
     input_df["RBI"] = 0
     input_df["BB"] = 0
     input_df["BB_int"] = 0
@@ -130,7 +138,7 @@ def stat_generation(input_df):
 
     for i in range(len(input_df)):
 
-        if any(ab in input_df.loc[i, "event_describer"] for ab in ["W", "HP", "SF","SH", "I", "IW", "C/E3", "C/E2", "C/E1"]):
+        if any(ab in input_df.loc[i, "event_describer"] for ab in ["NP", "W", "HP", "SF","SH", "I", "IW", "C/E3", "C/E2", "C/E1", "BK"]):
             input_df.at[i, "AB"] = 0
 
         if any(s in input_df.loc[i, "event_describer"] for s in ["S0", "S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9"]):
@@ -144,6 +152,14 @@ def stat_generation(input_df):
             input_df.at[i, "H"] = 1
             input_df.at[i, "Triple"] = 1
 
+        if "D/" in input_df.loc[i, "event_describer"][0:2]:
+            input_df.at[i, "H"] = 1
+            input_df.at[i, "Double"] = 1       
+
+        if "T/" in input_df.loc[i, "event_describer"][0:2]:
+            input_df.at[i, "H"] = 1
+            input_df.at[i, "Triple"] = 1            
+
         if "HR" in input_df.loc[i, "event_describer"]:
             input_df.at[i, "H"] = 1
             input_df.at[i, "HR"] = 1
@@ -156,11 +172,35 @@ def stat_generation(input_df):
 
         if "1-H" in input_df.loc[i, "event_describer"]:
             input_df.at[i, "1-H"] = 1
+        
+        if any(rbi_er_1h in input_df.loc[i, "event_describer"] for rbi_er_1h in ["1-H(E0)", "1-H(E1)", "1-H(E2)", "1-H(E3)", "1-H(E4)", "1-H(E5)", "1-H(E6)", "1-H(E7)", "1-H(E8)", "1-H(E9)", "1-H(E0/TH)", "1-H(E1/TH)", "1-H(E2/TH)", "1-H(E3/TH)", "1-H(E4/TH)", "1-H(E5/TH)", "1-H(E6/TH)", "1-H(E7/TH)", "1-H(E8/TH)", "1-H(E9/TH)"]):
+            input_df.at[i, "1-H(ER)"] = 1
 
+        if any(rbi_er_2h in input_df.loc[i, "event_describer"] for rbi_er_2h in ["2-H(E0)", "2-H(E1)", "2-H(E2)", "2-H(E3)", "2-H(E4)", "2-H(E5)", "2-H(E6)", "2-H(E7)", "2-H(E8)", "2-H(E9)", "2-H(E0/TH)", "2-H(E1/TH)", "2-H(E2/TH)", "2-H(E3/TH)", "2-H(E4/TH)", "2-H(E5/TH)", "2-H(E6/TH)", "2-H(E7/TH)", "2-H(E8/TH)", "2-H(E9/TH)"]):
+            input_df.at[i, "2-H(ER)"] = 1            
+
+        if any(rbi_er_3h in input_df.loc[i, "event_describer"] for rbi_er_3h in ["3-H(E0)", "3-H(E1)", "3-H(E2)", "3-H(E3)", "3-H(E4)", "3-H(E5)", "3-H(E6)", "3-H(E7)", "3-H(E8)", "3-H(E9)","3-H(E0/TH)", "3-H(E1/TH)", "3-H(E2/TH)", "3-H(E3/TH)", "3-H(E4/TH)", "3-H(E5/TH)", "3-H(E6/TH)", "3-H(E7/TH)", "3-H(E8/TH)", "3-H(E9/TH)"]):
+            input_df.at[i, "3-H(ER)"] = 1
+        
+        if any(rbi_nr_1h in input_df.loc[i, "event_describer"] for rbi_nr_1h in ["1-H(NR)","1-H(PB)(NR)","1-H(WP)(NR)"]):
+            input_df.at[i, "1-H(NR)"] = 1
+        if any(rbi_nr_2h in input_df.loc[i, "event_describer"] for rbi_nr_2h in ["2-H(NR)","2-H(PB)(NR)","2-H(WP)(NR)"]):
+            input_df.at[i, "2-H(NR)"] = 1
+        if any(rbi_nr_3h in input_df.loc[i, "event_describer"] for rbi_nr_3h in ["3-H(NR)","3-H(PB)(NR)","3-H(WP)(NR)"]):
+            input_df.at[i, "3-H(NR)"] = 1
+            
         if any(er in input_df.loc[i, "event_describer"] for er in ["E0", "E1", "E2", "E3", "E4", "E5", "E6", "E7", "E8", "E9"]):
             input_df.at[i, "ER"] = 1
 
-        input_df.at[i, "RBI"] = input_df.at[i, "HR"] + input_df.at[i, "3-H"] + input_df.at[i, "2-H"] + input_df.at[i, "1-H"] - input_df.at[i, "ER"]
+        if "NR" in input_df.loc[i, "event_describer"]:
+            # This field can be present more than 1 time in a record
+            input_df["NR"] = input_df["event_describer"].apply(lambda x: x.count("NR"))
+
+        if "NORBI" in input_df.loc[i, "event_describer"]:
+            # This field can be present more than 1 time in a record
+            input_df["NORBI"] = input_df["event_describer"].apply(lambda x: x.count("NORBI")) 
+
+        input_df.at[i, "RBI"] = input_df.at[i, "HR"] + input_df.at[i, "3-H"] + input_df.at[i, "2-H"] + input_df.at[i, "1-H"] - (input_df.at[i, "1-H(ER)"]+input_df.at[i, "2-H(ER)"]+input_df.at[i, "3-H(ER)"]+input_df.at[i, "1-H(NR)"]+input_df.at[i, "2-H(NR)"]+input_df.at[i, "3-H(NR)"])
 
         if "W" in input_df.loc[i, "event_describer"]:
             input_df.at[i, "BB"] = 1        
@@ -197,7 +237,8 @@ def stat_generation(input_df):
         if "K" in input_df.loc[i, "event_describer"]:
             input_df.at[i, "SO"] = 1
 
-    return input_df.drop(['3-H','2-H','1-H', 'SB2', 'SB3', 'SBH', 'ER'], axis=1)
+    return input_df.drop(['3-H','2-H','1-H','1-H(ER)','2-H(ER)','3-H(ER)','1-H(NR)','2-H(NR)','3-H(NR)', 'SB2', 'SB3', 'SBH', 'ER', 'NR', 'NORBI'], axis=1)
+
 
 def run_etl(df, file_path):
     # Write this dataframe to a CSV file in the listed location.

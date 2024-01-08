@@ -48,20 +48,15 @@ The tech stack used within this Project is as follows:
             7. Illegal Column Values Testing
             8. Accepted Value Testing
             9. Refrential Integrity Testing
-            ACTION - TO DO
             10. Multi-data source testing ---> Compare against additional reference
 * CI/CD
     * I will be setting up a basic CI pipeline to ensure that following any changes to the project that the corresponding data is properly tested. 
     * ACTION - continue to build upon this pipeline. 
-* Python Data Visualization 
-    * ACTION - matplotlib
-    * ACTION - Seaborn
-    * ACTION put these into Power BI 
 
 * Data Model
     * Dimensions:
         * Team Rosters
-        * Team Stats (ACTION ---> Change to a FACT?)
+        * Teams
         * Dates
     * Facts:
         * Events
